@@ -58,7 +58,7 @@ main-build: IKS01A2_LoRa_Tx-debug.elf
 IKS01A2_LoRa_Tx-debug.elf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MCU G++ Linker'
-	arm-none-eabi-g++ -mcpu=cortex-m4 -mthumb -mfloat-abi=softfp -mfpu=fpv4-sp-d16 -L"/home/rob/workspace/IKS01A2_LoRa_Tx/mbed/TARGET_NUCLEO_L476RG/TOOLCHAIN_GCC_ARM" -Wl,--wrap=main -Wl, -Wl,--wrap=_memalign_r -Wl,--wrap=exit -Wl,--wrap=atexit -DMBED_DEBUG -DMBED_TRAP_ERRORS_ENABLED=1 -Wl,-n -Wl,--start-group -lstdc++ -lsupc++ -lm -lc -lgcc -lnosys -Wl,--end-group -T"/home/rob/workspace/IKS01A2_LoRa_Tx/mbed/TARGET_NUCLEO_L476RG/TOOLCHAIN_GCC_ARM/STM32L476XX.ld" -Wl,-Map=output.map -Wl,--gc-sections -fno-exceptions -fno-rtti -o "IKS01A2_LoRa_Tx-debug.elf" @"objects.list" $(USER_OBJS) $(LIBS) -lm
+	arm-none-eabi-g++ -mcpu=cortex-m4 -mthumb -mfloat-abi=softfp -mfpu=fpv4-sp-d16 -L"/home/rob/git/IKS01A2_LoRa_Tx/mbed/TARGET_NUCLEO_L476RG/TOOLCHAIN_GCC_ARM" -Wl,--wrap=main -Wl, -Wl,--wrap=_memalign_r -Wl,--wrap=exit -Wl,--wrap=atexit -DMBED_DEBUG -DMBED_TRAP_ERRORS_ENABLED=1 -Wl,-n -Wl,--start-group -lstdc++ -lsupc++ -lm -lc -lgcc -lnosys -Wl,--end-group -T"/home/rob/git/IKS01A2_LoRa_Tx/mbed/TARGET_NUCLEO_L476RG/TOOLCHAIN_GCC_ARM/STM32L476XX.ld" -Wl,-Map=output.map -Wl,--gc-sections -fno-exceptions -fno-rtti -o "IKS01A2_LoRa_Tx-debug.elf" @"objects.list" $(USER_OBJS) $(LIBS) -lm
 	@echo 'Finished building target: $@'
 	@echo ' '
 	$(MAKE) --no-print-directory post-build
@@ -70,7 +70,7 @@ clean:
 
 pre-build:
 	-@echo 'Creating makefile.defs:'
-	-echo "export PREPROC_CMD = /home/rob/Ac6/SystemWorkbench2/plugins/fr.ac6.mcu.externaltools.arm-none.linux64_1.15.0.201708311556/tools/compiler/bin/arm-none-eabi-cpp -E -P" > /home/rob/workspace/IKS01A2_LoRa_Tx/makefile.defs
+	-echo "export PREPROC_CMD = /home/rob/Ac6/SystemWorkbench2/plugins/fr.ac6.mcu.externaltools.arm-none.linux64_1.15.0.201708311556/tools/compiler/bin/arm-none-eabi-cpp -E -P" > /home/rob/git/IKS01A2_LoRa_Tx/makefile.defs
 	-@echo ' '
 
 post-build:
