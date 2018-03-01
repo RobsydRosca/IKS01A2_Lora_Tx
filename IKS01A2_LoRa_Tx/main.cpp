@@ -167,7 +167,7 @@ static char *printDouble(char* str, double v, int decimalDigits=2)
 
   /* calculate integer & fractinal parts */
   intPart = (int)v;
-  fractPart = (int)((v-(double)(int)v)*i);
+  fractPart = abs((int)((v-(double)(int)v)*i));
 
   /* fill in integer part */
   sprintf(str, "%i.", intPart);
@@ -197,19 +197,19 @@ int main()
 //    debug( "\n\n\r     SX1276 Ping Pong Demo Application \n\n\r" );
 
     // Initialize Radio driver
-    RadioEvents.TxDone = OnTxDone;
-    RadioEvents.RxDone = OnRxDone;
-    RadioEvents.RxError = OnRxError;
-    RadioEvents.TxTimeout = OnTxTimeout;
-    RadioEvents.RxTimeout = OnRxTimeout;
-    Radio.Init( &RadioEvents );
+	RadioEvents.TxDone = OnTxDone;
+	RadioEvents.RxDone = OnRxDone;
+	RadioEvents.RxError = OnRxError;
+	RadioEvents.TxTimeout = OnTxTimeout;
+	RadioEvents.RxTimeout = OnRxTimeout;
+	Radio.Init( &RadioEvents );
 
-    // verify the connection with the board
-    while( Radio.Read( REG_VERSION ) == 0x00  )
-    {
-        printf( "Radio could not be detected!\n\r");
-        wait( 1 );
-    }
+	// verify the connection with the board
+	while( Radio.Read( REG_VERSION ) == 0x00  )
+	{
+		printf( "Radio could not be detected!\n\r");
+		wait( 1 );
+	}
 
 //    debug_if( ( DEBUG_MESSAGE & ( Radio.DetectBoardType( ) == SX1276MB1LAS ) ) , "\n\r > Board Type: SX1276MB1LAS < \n\r" );
 //    debug_if( ( DEBUG_MESSAGE & ( Radio.DetectBoardType( ) == SX1276MB1MAS ) ) , "\n\r > Board Type: SX1276MB1MAS < \n\r" );
@@ -253,86 +253,83 @@ int main()
 #endif
 
 //    debug_if( DEBUG_MESSAGE, "Starting Ping-Pong loop\r\n" );
-    led = 0;
+//    led = 0;
     Radio.Rx( RX_TIMEOUT_VALUE );
 
 
 
 // ==================================================================
+	int i;
+	uint8_t id;
+	float value1, value2;
+	char buffer1[32], buffer2[32];
+	int32_t axes[3];
 
-  uint8_t id;
-  float value1, value2;
-  char buffer1[32], buffer2[32];
-  int32_t axes[3];
-  
-  printf("\r\n--- Starting new run ---\r\n");
+	printf("\r\n--- Starting new run ---\r\n");
 
-  humidity_sensor->read_id(&id);
-  printf("HTS221  humidity & temperature    = 0x%X\r\n", id);
-  pressure_sensor->read_id(&id);
-  printf("LPS25H  pressure & temperature    = 0x%X\r\n", id);
-  magnetometer->read_id(&id);
-  printf("LIS3MDL magnetometer              = 0x%X\r\n", id);
-  gyroscope->read_id(&id);
-  printf("LSM6DS0 accelerometer & gyroscope = 0x%X\r\n", id);
-  
-  wait(3);
-  char zip1[5], zip2[5], zip3[7];
+	humidity_sensor->read_id(&id);
+	printf("HTS221  humidity & temperature    = 0x%X\r\n", id);
+	pressure_sensor->read_id(&id);
+	printf("LPS25H  pressure & temperature    = 0x%X\r\n", id);
+	magnetometer->read_id(&id);
+	printf("LIS3MDL magnetometer              = 0x%X\r\n", id);
+	gyroscope->read_id(&id);
+	printf("LSM6DS0 accelerometer & gyroscope = 0x%X\r\n", id);
+
+	wait(3);
+	char zip1[5], zip2[5], zip3[7];
  
-  while(1)
-  {
-    printf("\r\n");
+	while(1)
+	{
+		printf("\r\n");
 
-    temp_sensor1->get_temperature(&value1);
-    humidity_sensor->get_humidity(&value2);
-    printf("HTS221: [temp] %7s°C,   [hum] %s%%\r\n", printDouble(buffer1, value1), printDouble(buffer2, value2));
-    printDouble(zip1, value1);
-    printDouble(zip2, value2);
-    
-    temp_sensor2->get_fahrenheit(&value1);
-    pressure_sensor->get_pressure(&value2);
-    printf("LPS25H: [temp] %7s°F, [press] %smbar\r\n", printDouble(buffer1, value1), printDouble(buffer2, value2));
-    printDouble(zip3, value2);
-    printf("---\r\n");
+		temp_sensor1->get_temperature(&value1);
+		humidity_sensor->get_humidity(&value2);
+		printf("HTS221: [temp] %7s°C, [hum] %s%%\r\n", printDouble(buffer1, value1), printDouble(buffer2, value2));
+		printDouble(zip1, value1);
+		printDouble(zip2, value2);
 
-    magnetometer->get_m_axes(axes);
-    printf("LIS3MDL [mag/mgauss]:  %7ld, %7ld, %7ld\r\n", axes[0], axes[1], axes[2]);
+		temp_sensor2->get_fahrenheit(&value1);
+		pressure_sensor->get_pressure(&value2);
+		printf("LPS25H: [temp] %7s°F, [press] %smbar\r\n", printDouble(buffer1, value1), printDouble(buffer2, value2));
+		printDouble(zip3, value2);
+		printf("---\r\n");
 
-    accelerometer->get_x_axes(axes);
-    printf("LSM6DS0 [acc/mg]:      %7ld, %7ld, %7ld\r\n", axes[0], axes[1], axes[2]);
+		magnetometer->get_m_axes(axes);
+		printf("LIS3MDL [mag/mgauss]:  %7ld, %7ld, %7ld\r\n", axes[0], axes[1], axes[2]);
 
-    gyroscope->get_g_axes(axes);
-    printf("LSM6DS0 [gyro/mdps]:   %7ld, %7ld, %7ld\r\n", axes[0], axes[1], axes[2]);
+		accelerometer->get_x_axes(axes);
+		printf("LSM6DS0 [acc/mg]:      %7ld, %7ld, %7ld\r\n", axes[0], axes[1], axes[2]);
 
-    wait(1.5);
+		gyroscope->get_g_axes(axes);
+		printf("LSM6DS0 [gyro/mdps]:   %7ld, %7ld, %7ld\r\n", axes[0], axes[1], axes[2]);
 
-// ===================== LoRa output ============================
-    led = 1;
-    sprintf((char*)Messaggio, "T=%5s °C, H=%5s %%", zip1, zip2);
-//    sprintf((char*)Messaggio, "[temp] %7s°C, [hum] %s%%\r\n", printDouble(buffer1, value1), printDouble(buffer2, value2));
-    strcpy( ( char* )Buffer, ( char* )Messaggio );
-    // We fill the buffer with numbers for the payload
-//    for( i = sizeof(Messaggio); i < BufferSize; i++ )
-//    {
-//        Buffer[i] = (uint8_t)'o';
-//    }
-    wait_ms( 10 );
-    Radio.Send(Buffer, BufferSize);
-    wait_ms( 1000 );
+		wait(1.5);
 
-    sprintf((char*)Messaggio, "P=%7s mbar", zip3);
-    strcpy( ( char* )Buffer, ( char* )Messaggio );
-    wait_ms( 10 );
-    Radio.Send(Buffer, BufferSize);
+		// ===================== LoRa output ============================
+		//    led = 1;
+		sprintf((char*)Messaggio, "%5s, %5s, %7s", zip1, zip2, zip3);
+		strcpy( ( char* )Buffer, ( char* )Messaggio );
+		for( i = sizeof(Messaggio); i < BufferSize; i++ )
+		{
+			Buffer[i] = (uint8_t)'o';
+		}
+		strcpy( ( char* )Buffer, ( char* )Messaggio );
+		wait_ms( 10 );
+		Radio.Send(Buffer, BufferSize);
+		/*
+		sprintf((char*)Messaggio, "P=%7s mbar", zip3);
+		strcpy( ( char* )Buffer, ( char* )Messaggio );
+		wait_ms( 10 );
+		Radio.Send(Buffer, BufferSize);
+		*/
+		//    led = 0;
+		State = LOWPOWER;
+		wait_ms( 5000 );
 
-    led = 0;
-    State = LOWPOWER;
-    wait_ms( 1000 );
+		// ==============================================================
 
-// ==============================================================
-
-
-  }
+	}
 }
 
 void OnTxDone( void )
